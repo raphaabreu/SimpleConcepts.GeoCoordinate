@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleConcepts.GeoCoordinates", "SimpleConcepts.GeoCoordinates\SimpleConcepts.GeoCoordinates.csproj", "{93FF9DB8-4AF4-417B-9CBC-354B1F7C00BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93FF9DB8-4AF4-417B-9CBC-354B1F7C00BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93FF9DB8-4AF4-417B-9CBC-354B1F7C00BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93FF9DB8-4AF4-417B-9CBC-354B1F7C00BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93FF9DB8-4AF4-417B-9CBC-354B1F7C00BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0B7B3F08-E7DE-4F35-A77C-FEDBA80C0332}
+	EndGlobalSection
+EndGlobal
