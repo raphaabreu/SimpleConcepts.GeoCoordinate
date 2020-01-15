@@ -99,6 +99,8 @@ namespace SimpleConcepts.GeoCoordinates.Tests
             var point1 = new GeoPoint(-43.2126812, -22.951911);
             var point2 = new GeoPoint(-43.1589638, -22.9492483);
 
+            var x = new GeoRegion(new GeoPoint(10, 10), new GeoPoint(10.1, 10.1), new GeoPoint(10.2, 10.2), new GeoPoint(10.0, 10.0));
+
             // Act
             var shift = point2 - point1;
 

@@ -112,14 +112,14 @@ namespace SimpleConcepts.GeoCoordinates
         /// <returns>The heading in degrees</returns>
         private static double CalculateHeading(GeoPoint pointA, GeoPoint pointB)
         {
-            var dLon = (pointB.Longitude - pointA.Longitude) * (Math.PI / 180);
-            var dPhi = Math.Log(Math.Tan(pointB.Latitude * (Math.PI / 180) / 2 + Math.PI / 4) / Math.Tan(pointA.Latitude * (Math.PI / 180) / 2 + Math.PI / 4));
+            var dLon = Util.ToRadians(pointB.Longitude - pointA.Longitude);
+            var dPhi = Math.Log(Math.Tan(Util.ToRadians(pointB.Latitude) / 2 + Math.PI / 4) / Math.Tan(Util.ToRadians(pointA.Latitude) / 2 + Math.PI / 4));
             if (Math.Abs(dLon) > Math.PI)
             {
                 dLon = dLon > 0 ? -(2 * Math.PI - dLon) : (2 * Math.PI + dLon);
             }
 
-            return (Math.Atan2(dLon, dPhi) * 180 / Math.PI + 360) % 360;
+            return (Util.ToDegrees(Math.Atan2(dLon, dPhi)) + 360) % 360;
         }
 
         /// <summary>
@@ -128,12 +128,12 @@ namespace SimpleConcepts.GeoCoordinates
         /// <returns>The distance in meters</returns>
         private static double CalculateDistance(GeoPoint pointA, GeoPoint pointB)
         {
-            var a = (pointA.Latitude - pointB.Latitude) * (Math.PI / 180.0);
-            var b = (pointA.Longitude - pointB.Longitude) * (Math.PI / 180.0);
-            var c = pointB.Latitude * (Math.PI / 180.0);
-            var d = pointA.Latitude * (Math.PI / 180.0);
-            var e = Math.Sin(a / 2.0) * Math.Sin(a / 2.0) + Math.Sin(b / 2.0) * Math.Sin(b / 2.0) * Math.Cos(c) * Math.Cos(d);
-            return 6371000.0 * (2.0 * Math.Atan2(Math.Sqrt(e), Math.Sqrt(1.0 - e)));
+            var dLat = Util.ToRadians(pointB.Latitude - pointA.Latitude);
+            var dLon = Util.ToRadians(pointB.Longitude - pointA.Longitude);
+            var a = Math.Sin(dLat / 2.0) * Math.Sin(dLat / 2.0) +
+                    Math.Sin(dLon / 2.0) * Math.Sin(dLon / 2.0) * Math.Cos(Util.ToRadians(pointA.Latitude)) * Math.Cos(Util.ToRadians(pointB.Latitude));
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            return Util.EQUATORIAL_RADIUS * c;
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace SimpleConcepts.GeoCoordinates
             }
             if (coordinates.Length < 2)
             {
-                throw new ArgumentException("Array must contain two elements", nameof(coordinates));
+                throw new ArgumentException("Value must contain two elements.", nameof(coordinates));
             }
 
             return new GeoPoint(coordinates[0], coordinates[1]);
