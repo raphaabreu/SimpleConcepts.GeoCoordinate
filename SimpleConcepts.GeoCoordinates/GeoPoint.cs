@@ -90,17 +90,48 @@ namespace SimpleConcepts.GeoCoordinates
         }
 
         /// <summary>
-        /// Calculates the great-circle distance between both points on Earth.
+        /// Calculates the <see cref="GeoShift"/> from the <paramref name="left"/> to the <paramref name="right"/>
         /// </summary>
         /// <param name="left">The left <see cref="GeoPoint"/> reference point</param>
         /// <param name="right">The right <see cref="GeoPoint"/> reference point</param>
-        /// <returns>The distance between the <paramref name="left"/> and <paramref name="right"/> points measured in meters.</returns>
-        public static double operator -(GeoPoint left, GeoPoint right)
+        /// <returns>The <see cref="GeoShift"/> between both points.</returns>
+        public static GeoShift operator -(GeoPoint left, GeoPoint right)
         {
-            var a = (left.Latitude - right.Latitude) * (Math.PI / 180.0);
-            var b = (left.Longitude - right.Longitude) * (Math.PI / 180.0);
-            var c = right.Latitude * (Math.PI / 180.0);
-            var d = left.Latitude * (Math.PI / 180.0);
+            return new GeoShift(CalculateDistance(left, right), CalculateHeading(left, right));
+        }
+
+        public static GeoPoint operator +(GeoPoint left, GeoShift right)
+        {
+            // TODO: GeoPoint + GeoShift;
+            return left;
+        }
+
+        /// <summary>
+        /// Calculates the heading from <paramref name="pointA"/> to <paramref name="pointB"/>.
+        /// </summary>
+        /// <returns>The heading in degrees</returns>
+        private static double CalculateHeading(GeoPoint pointA, GeoPoint pointB)
+        {
+            var dLon = (pointB.Longitude - pointA.Longitude) * (Math.PI / 180);
+            var dPhi = Math.Log(Math.Tan(pointB.Latitude * (Math.PI / 180) / 2 + Math.PI / 4) / Math.Tan(pointA.Latitude * (Math.PI / 180) / 2 + Math.PI / 4));
+            if (Math.Abs(dLon) > Math.PI)
+            {
+                dLon = dLon > 0 ? -(2 * Math.PI - dLon) : (2 * Math.PI + dLon);
+            }
+
+            return (Math.Atan2(dLon, dPhi) * 180 / Math.PI + 360) % 360;
+        }
+
+        /// <summary>
+        /// Calculates the distance from <paramref name="pointA"/> to <paramref name="pointB"/>.
+        /// </summary>
+        /// <returns>The distance in meters</returns>
+        private static double CalculateDistance(GeoPoint pointA, GeoPoint pointB)
+        {
+            var a = (pointA.Latitude - pointB.Latitude) * (Math.PI / 180.0);
+            var b = (pointA.Longitude - pointB.Longitude) * (Math.PI / 180.0);
+            var c = pointB.Latitude * (Math.PI / 180.0);
+            var d = pointA.Latitude * (Math.PI / 180.0);
             var e = Math.Sin(a / 2.0) * Math.Sin(a / 2.0) + Math.Sin(b / 2.0) * Math.Sin(b / 2.0) * Math.Cos(c) * Math.Cos(d);
             return 6371000.0 * (2.0 * Math.Atan2(Math.Sqrt(e), Math.Sqrt(1.0 - e)));
         }

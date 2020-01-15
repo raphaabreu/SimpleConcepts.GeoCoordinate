@@ -100,10 +100,10 @@ namespace SimpleConcepts.GeoCoordinates.Tests
             var point2 = new GeoPoint(-43.1589638, -22.9492483);
 
             // Act
-            var distance = point2 - point1;
+            var shift = point2 - point1;
 
             // Assert
-            Assert.Equal(5508.24386676248, distance);
+            Assert.Equal(5508.24386676248, shift.Distance);
         }
 
         [Fact]
