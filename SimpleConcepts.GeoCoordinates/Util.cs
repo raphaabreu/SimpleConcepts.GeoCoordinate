@@ -4,7 +4,7 @@ namespace SimpleConcepts.GeoCoordinates
 {
     internal static class Util
     {
-        public const double EQUATORIAL_RADIUS = 6378137;
+        public const double EQUATORIAL_RADIUS = 6371000;
 
         public static double ToRadians(double degrees)
         {

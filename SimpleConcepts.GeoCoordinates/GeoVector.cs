@@ -4,27 +4,27 @@ using System.Diagnostics;
 namespace SimpleConcepts.GeoCoordinates
 {
     [DebuggerDisplay("{Distance} meters on {Heading}° N")]
-    public struct GeoShift : IEquatable<GeoShift>
+    public struct GeoVector : IEquatable<GeoVector>
     {
         public double Distance { get; }
         public double Heading { get; }
 
-        public static GeoShift Zero { get; } = new GeoShift(0, 0);
+        public static GeoVector Zero { get; } = new GeoVector(0, 0);
 
-        public GeoShift(double distance, double heading)
+        public GeoVector(double distance, double heading)
         {
             Distance = distance;
             Heading = heading;
         }
 
-        public bool Equals(GeoShift other)
+        public bool Equals(GeoVector other)
         {
             return Distance.Equals(other.Distance) && Heading.Equals(other.Heading);
         }
 
         public override bool Equals(object obj)
         {
-            return obj is GeoShift other && Equals(other);
+            return obj is GeoVector other && Equals(other);
         }
 
         public override int GetHashCode()
@@ -35,32 +35,32 @@ namespace SimpleConcepts.GeoCoordinates
             }
         }
 
-        public static bool operator ==(GeoShift left, GeoShift right)
+        public static bool operator ==(GeoVector left, GeoVector right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(GeoShift left, GeoShift right)
+        public static bool operator !=(GeoVector left, GeoVector right)
         {
             return !(left == right);
         }
 
-        public static GeoShift operator *(GeoShift left, double right)
+        public static GeoVector operator *(GeoVector left, double right)
         {
-            return new GeoShift(left.Distance * right, left.Heading);
+            return new GeoVector(left.Distance * right, left.Heading);
         }
 
-        public static GeoShift operator /(GeoShift left, double right)
+        public static GeoVector operator /(GeoVector left, double right)
         {
-            return new GeoShift(left.Distance / right, left.Heading);
+            return new GeoVector(left.Distance / right, left.Heading);
         }
 
-        public static GeoShift operator +(GeoShift left, GeoShift right)
+        public static GeoVector operator +(GeoVector left, GeoVector right)
         {
             return left;
         }
 
-        public static GeoShift operator -(GeoShift left, GeoShift right)
+        public static GeoVector operator -(GeoVector left, GeoVector right)
         {
             return left + right * -1;
         }

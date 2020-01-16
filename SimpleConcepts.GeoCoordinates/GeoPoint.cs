@@ -11,12 +11,12 @@ namespace SimpleConcepts.GeoCoordinates
     public struct GeoPoint : IEquatable<GeoPoint>
     {
         /// <summary>
-        /// Latitude in decimal form ranging from -90 to 90.
+        /// Latitude (φ) in degrees form ranging from -90 to 90.
         /// </summary>
         public double Latitude { get; }
 
         /// <summary>
-        /// Longitude in decimal form ranging from -180 to 180.
+        /// Longitude (λ) in degrees form ranging from -180 to 180.
         /// </summary>
         public double Longitude { get; }
 
@@ -28,8 +28,8 @@ namespace SimpleConcepts.GeoCoordinates
         /// <summary>
         /// Creates a new GeoPoint.
         /// </summary>
-        /// <param name="longitude">Longitude in decimal form ranging from -180 to 180.</param>
-        /// <param name="latitude">Latitude in decimal form ranging from -90 to 90.</param>
+        /// <param name="longitude">Longitude (φ) in degrees form ranging from -180 to 180.</param>
+        /// <param name="latitude">Latitude (λ) in degrees form ranging from -90 to 90.</param>
         public GeoPoint(double longitude, double latitude)
         {
             if (latitude > 90 || latitude < -90)
@@ -90,20 +90,46 @@ namespace SimpleConcepts.GeoCoordinates
         }
 
         /// <summary>
-        /// Calculates the <see cref="GeoShift"/> from the <paramref name="left"/> to the <paramref name="right"/>
+        /// Calculates the <see cref="GeoVector"/> from the <paramref name="left"/> to the <paramref name="right"/>
         /// </summary>
         /// <param name="left">The left <see cref="GeoPoint"/> reference point</param>
         /// <param name="right">The right <see cref="GeoPoint"/> reference point</param>
-        /// <returns>The <see cref="GeoShift"/> between both points.</returns>
-        public static GeoShift operator -(GeoPoint left, GeoPoint right)
+        /// <returns>The <see cref="GeoVector"/> between both points.</returns>
+        public static GeoVector operator -(GeoPoint left, GeoPoint right)
         {
-            return new GeoShift(CalculateDistance(left, right), CalculateHeading(left, right));
+            return new GeoVector(CalculateDistance(left, right), CalculateHeading(left, right));
         }
 
-        public static GeoPoint operator +(GeoPoint left, GeoShift right)
+        /// <summary>
+        /// Adds the given <see cref="GeoVector"/> to the current point returning the final point.
+        /// </summary>
+        /// <param name="left">The origin <see cref="GeoPoint"/></param>
+        /// <param name="right">The <see cref="GeoVector"/> to add</param>
+        /// <returns>The final <see cref="GeoPoint"/></returns>
+        public static GeoPoint operator +(GeoPoint left, GeoVector right)
         {
-            // TODO: GeoPoint + GeoShift;
-            return left;
+            var φ1 = Util.ToRadians(left.Latitude);
+            var λ1 = Util.ToRadians(left.Longitude);
+            var δ = right.Distance / Util.EQUATORIAL_RADIUS;
+            var θ = Util.ToRadians(right.Heading);
+
+            var φ2 = Math.Asin(Math.Sin(φ1) * Math.Cos(δ) +
+                               Math.Cos(φ1) * Math.Sin(δ) * Math.Cos(θ));
+            var λ2 = λ1 + Math.Atan2(Math.Sin(θ) * Math.Sin(δ) * Math.Cos(φ1),
+                         Math.Cos(δ) - Math.Sin(φ1) * Math.Sin(φ2));
+
+            return new GeoPoint(Util.ToDegrees(λ2), Util.ToDegrees(φ2));
+        }
+
+        /// <summary>
+        /// Adds the given <see cref="GeoVector"/> to the current point returning the final point.
+        /// </summary>
+        /// <param name="left">The <see cref="GeoVector"/> to add</param>
+        /// <param name="right">The origin <see cref="GeoPoint"/></param>
+        /// <returns>The final <see cref="GeoPoint"/></returns>
+        public static GeoPoint operator +(GeoVector left, GeoPoint right)
+        {
+            return right + left;
         }
 
         /// <summary>
@@ -128,11 +154,15 @@ namespace SimpleConcepts.GeoCoordinates
         /// <returns>The distance in meters</returns>
         private static double CalculateDistance(GeoPoint pointA, GeoPoint pointB)
         {
-            var dLat = Util.ToRadians(pointB.Latitude - pointA.Latitude);
-            var dLon = Util.ToRadians(pointB.Longitude - pointA.Longitude);
-            var a = Math.Sin(dLat / 2.0) * Math.Sin(dLat / 2.0) +
-                    Math.Sin(dLon / 2.0) * Math.Sin(dLon / 2.0) * Math.Cos(Util.ToRadians(pointA.Latitude)) * Math.Cos(Util.ToRadians(pointB.Latitude));
+            var φ1 = Util.ToRadians(pointA.Latitude);
+            var φ2 = Util.ToRadians(pointB.Latitude);
+            var Δφ = Util.ToRadians(pointB.Latitude - pointA.Latitude);
+            var Δλ = Util.ToRadians(pointB.Longitude - pointA.Longitude);
+
+            var a = Math.Sin(Δφ / 2.0) * Math.Sin(Δφ / 2.0) +
+                    Math.Sin(Δλ / 2.0) * Math.Sin(Δλ / 2.0) * Math.Cos(φ1) * Math.Cos(φ2);
             var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
             return Util.EQUATORIAL_RADIUS * c;
         }
 

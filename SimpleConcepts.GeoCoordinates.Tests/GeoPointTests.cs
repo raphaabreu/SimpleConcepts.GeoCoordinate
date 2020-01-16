@@ -99,13 +99,51 @@ namespace SimpleConcepts.GeoCoordinates.Tests
             var point1 = new GeoPoint(-43.2126812, -22.951911);
             var point2 = new GeoPoint(-43.1589638, -22.9492483);
 
-            var x = new GeoRegion(new GeoPoint(10, 10), new GeoPoint(10.1, 10.1), new GeoPoint(10.2, 10.2), new GeoPoint(10.0, 10.0));
-
             // Act
-            var shift = point2 - point1;
+            var result = point2 - point1;
 
             // Assert
-            Assert.Equal(5508.24386676248, shift.Distance);
+            Assert.Equal(5508.24386676248, result.Distance);
+            Assert.Equal(266.91875639243278, result.Heading);
+        }
+
+        [Fact]
+        public void AdditionOperator1_WithInput_ReturnsExpectedValue()
+        {
+            // Arrange
+            var point = new GeoPoint(-43.1589638, -22.9492483);
+            var vector = new GeoVector(5508.24386676248, 266.91875639243278);
+
+            // Act
+            var result = point + vector;
+
+            // Assert
+            Assert.Equal(new GeoPoint(-43.212681725861259, -22.951901958225204), result);
+        }
+
+        [Fact]
+        public void X()
+        {
+            var p1 = new GeoPoint(0, 0);
+            var p2 = new GeoPoint(40, 40);
+
+            var d = p1 - p2;
+
+            var x = p1 + d;
+        }
+
+        [Fact]
+        public void AdditionOperator2_WithInput_ReturnsExpectedValue()
+        {
+            // Arrange
+            var point = new GeoPoint(-43.1589638, -22.9492483);
+            var vector = new GeoVector(5508.24386676248, 266.91875639243278);
+
+            // Act
+            var result = vector + point;
+
+            // Assert
+            Assert.Equal(new GeoPoint(-43.212681725861259, -22.951901958225204), result);
         }
 
         [Fact]
